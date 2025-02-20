@@ -10,7 +10,7 @@
         LessThanOrEqualTo,
         Contains,
         StartsWith,
-        LessThanOrEqualWhenNullable, 
+        LessThanOrEqualWhenNullable,
         GreaterThanOrEqualWhenNullable,
         EqualsWhenNullable
     }

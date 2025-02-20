@@ -34,13 +34,11 @@ namespace AspNetCore.IQueryable.Extensions.Filter
                 _customName = true;
         }
 
-
         public void UpdateValues(PropertyInfo propertyInfo)
         {
             Property = propertyInfo;
             if (!_customName)
                 FieldName = Property.Name;
         }
-
     }
 }

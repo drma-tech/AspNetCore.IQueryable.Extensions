@@ -43,7 +43,6 @@ namespace AspNetCore.IQueryable.Extensions.Filter
                             .First(m => m.Name == "ToUpper" && m.GetParameters().Length == 0));
                 }
 
-
                 var actualExpression = GetExpression<TEntity>(expression);
 
                 if (expression.Criteria.UseNot)
@@ -67,62 +66,55 @@ namespace AspNetCore.IQueryable.Extensions.Filter
             return lastExpression != null ? Expression.Lambda<Func<TEntity, bool>>(lastExpression, operations.ParameterExpression) : null;
         }
 
-
-
         private static Expression GetExpression<TEntity>(ExpressionParser expression)
         {
-
-            switch (expression.Criteria.Operator)
+            if (expression.FieldToFilter.Type != expression.FilterBy.Type)
             {
-                case WhereOperator.Equals:
-                    return Expression.Equal(expression.FieldToFilter, expression.FilterBy);
-                case WhereOperator.NotEquals:
-                    return Expression.NotEqual(expression.FieldToFilter, expression.FilterBy);
-                case WhereOperator.GreaterThan:
-                    return Expression.GreaterThan(expression.FieldToFilter, expression.FilterBy);
-                case WhereOperator.LessThan:
-                    return Expression.LessThan(expression.FieldToFilter, expression.FilterBy);
-                case WhereOperator.GreaterThanOrEqualTo:
-                    return Expression.GreaterThanOrEqual(expression.FieldToFilter, expression.FilterBy);
-                case WhereOperator.LessThanOrEqualTo:
-                    return Expression.LessThanOrEqual(expression.FieldToFilter, expression.FilterBy);
-                case WhereOperator.Contains:
-                    return ContainsExpression<TEntity>(expression);
-                case WhereOperator.GreaterThanOrEqualWhenNullable:
-                    return GreaterThanOrEqualWhenNullable(expression.FieldToFilter, expression.FilterBy);
-                case WhereOperator.LessThanOrEqualWhenNullable:
-                    return LessThanOrEqualWhenNullable(expression.FieldToFilter, expression.FilterBy);
-                case WhereOperator.EqualsWhenNullable:
-                    return EqualsWhenNullable(expression.FieldToFilter, expression.FilterBy);
-                case WhereOperator.StartsWith:
-                    return Expression.Call(expression.FieldToFilter,
-                        typeof(string).GetMethods()
-                            .First(m => m.Name == "StartsWith" && m.GetParameters().Length == 1),
-                        expression.FilterBy);
-                default:
-                    return Expression.Equal(expression.FieldToFilter, expression.FilterBy);
+                if (Nullable.GetUnderlyingType(expression.FieldToFilter.Type) != null)
+                {
+                    expression.FilterBy = Expression.Convert(expression.FilterBy, expression.FieldToFilter.Type);
+                }
+                else if (Nullable.GetUnderlyingType(expression.FilterBy.Type) != null)
+                {
+                    expression.FieldToFilter = Expression.Convert(expression.FieldToFilter, expression.FilterBy.Type);
+                }
             }
+
+            return expression.Criteria.Operator switch
+            {
+                WhereOperator.Equals => Expression.Equal(expression.FieldToFilter, expression.FilterBy),
+                WhereOperator.NotEquals => Expression.NotEqual(expression.FieldToFilter, expression.FilterBy),
+                WhereOperator.GreaterThan => Expression.GreaterThan(expression.FieldToFilter, expression.FilterBy),
+                WhereOperator.LessThan => Expression.LessThan(expression.FieldToFilter, expression.FilterBy),
+                WhereOperator.GreaterThanOrEqualTo => Expression.GreaterThanOrEqual(expression.FieldToFilter, expression.FilterBy),
+                WhereOperator.LessThanOrEqualTo => Expression.LessThanOrEqual(expression.FieldToFilter, expression.FilterBy),
+                WhereOperator.Contains => ContainsExpression<TEntity>(expression),
+                WhereOperator.GreaterThanOrEqualWhenNullable => GreaterThanOrEqualWhenNullable(expression.FieldToFilter, expression.FilterBy),
+                WhereOperator.LessThanOrEqualWhenNullable => LessThanOrEqualWhenNullable(expression.FieldToFilter, expression.FilterBy),
+                WhereOperator.EqualsWhenNullable => EqualsWhenNullable(expression.FieldToFilter, expression.FilterBy),
+                WhereOperator.StartsWith => Expression.Call(expression.FieldToFilter,
+                    typeof(string).GetMethods().First(m => m.Name == "StartsWith" && m.GetParameters().Length == 1), expression.FilterBy),
+                _ => Expression.Equal(expression.FieldToFilter, expression.FilterBy),
+            };
         }
-        
+
         private static Expression LessThanOrEqualWhenNullable(Expression e1, Expression e2)
         {
             if (IsNullableType(e1.Type) && !IsNullableType(e2.Type))
                 e2 = Expression.Convert(e2, e1.Type);
-            
             else if (!IsNullableType(e1.Type) && IsNullableType(e2.Type))
                 e1 = Expression.Convert(e1, e2.Type);
-            
+
             return Expression.LessThanOrEqual(e1, e2);
         }
-        
+
         private static Expression GreaterThanOrEqualWhenNullable(Expression e1, Expression e2)
         {
             if (IsNullableType(e1.Type) && !IsNullableType(e2.Type))
                 e2 = Expression.Convert(e2, e1.Type);
-            
             else if (!IsNullableType(e1.Type) && IsNullableType(e2.Type))
                 e1 = Expression.Convert(e1, e2.Type);
-            
+
             return Expression.GreaterThanOrEqual(e1, e2);
         }
 
@@ -130,7 +122,6 @@ namespace AspNetCore.IQueryable.Extensions.Filter
         {
             if (IsNullableType(e1.Type) && !IsNullableType(e2.Type))
                 e2 = Expression.Convert(e2, e1.Type);
-
             else if (!IsNullableType(e1.Type) && IsNullableType(e2.Type))
                 e1 = Expression.Convert(e1, e2.Type);
 
@@ -158,9 +149,6 @@ namespace AspNetCore.IQueryable.Extensions.Filter
 
                 return Expression.Call(expression.FieldToFilter, methodToApplyContains, expression.FilterBy);
             }
-
         }
-
-
     }
 }

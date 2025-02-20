@@ -19,6 +19,5 @@ namespace AspNetCore.IQueryable.Extensions
 
             return result;
         }
-
     }
 }

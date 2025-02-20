@@ -15,6 +15,7 @@ namespace AspNetCore.IQueryable.Extensions.Pagination
                 limit = 10;
             return result.Skip(offset).Take(limit);
         }
+
         public static IQueryable<TEntity> Paginate<TEntity, TModel>(this
                     IQueryable<TEntity> result,
                     TModel options)

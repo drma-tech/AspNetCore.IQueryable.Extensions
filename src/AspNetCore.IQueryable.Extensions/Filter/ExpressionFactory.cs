@@ -43,6 +43,7 @@ namespace AspNetCore.IQueryable.Extensions.Filter
 
             return expressions;
         }
+
         private static Type GetNonNullable(Type propertyType)
         {
             if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -52,10 +53,12 @@ namespace AspNetCore.IQueryable.Extensions.Filter
 
             return propertyType;
         }
-        static bool IsNullableType(Type t)
+
+        private static bool IsNullableType(Type t)
         {
             return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
+
         internal static WhereClause GetCriteria(ICustomQueryable model, PropertyInfo propertyInfo)
         {
             bool isCollection = propertyInfo.IsPropertyACollection();
@@ -93,7 +96,6 @@ namespace AspNetCore.IQueryable.Extensions.Filter
         {
             return Expression.Constant(constant, targetType);
         }
-
 
         internal static List<WhereClause> GetCriterias(ICustomQueryable searchModel)
         {
