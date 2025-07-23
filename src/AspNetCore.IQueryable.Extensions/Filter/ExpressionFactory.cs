@@ -32,10 +32,12 @@ namespace AspNetCore.IQueryable.Extensions.Filter
                     propertyValue = Expression.PropertyOrField(propertyValue, part);
                 }
 
-                var expressionData = new ExpressionParser();
-                expressionData.FieldToFilter = propertyValue;
-                expressionData.FilterBy = GetClosureOverConstant(criteria.Property.GetValue(model, null), GetNonNullable(criteria.Property.PropertyType));
-                expressionData.Criteria = criteria;
+                var expressionData = new ExpressionParser
+                {
+                    FieldToFilter = propertyValue,
+                    FilterBy = GetClosureOverConstant(criteria.Property.GetValue(model, null), GetNonNullable(criteria.Property.PropertyType)),
+                    Criteria = criteria
+                };
 
                 if (criteria.Property.GetValue(model, null) != null)
                     expressions.Add(expressionData);
@@ -73,7 +75,7 @@ namespace AspNetCore.IQueryable.Extensions.Filter
             {
                 var data = (QueryOperatorAttribute)attr.First(a => a.GetType() == typeof(QueryOperatorAttribute));
                 criteria.UpdateAttributeData(data);
-                if (data.Operator != WhereOperator.Contains && isCollection)
+                if (!data.IgnoreProperty && data.Operator != WhereOperator.Contains && isCollection)
                     throw new ArgumentException($"{propertyInfo.Name} - For array the only Operator available is Contains");
             }
 

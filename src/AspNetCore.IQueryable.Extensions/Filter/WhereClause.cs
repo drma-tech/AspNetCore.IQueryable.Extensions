@@ -15,6 +15,7 @@ namespace AspNetCore.IQueryable.Extensions.Filter
         public PropertyInfo Property { get; set; }
         public string FieldName { get; set; }
         public bool UseOr { get; set; }
+        public bool IgnoreProperty { get; set; }
 
         public WhereClause()
         {
@@ -30,6 +31,7 @@ namespace AspNetCore.IQueryable.Extensions.Filter
             CaseSensitive = data.CaseSensitive;
             FieldName = data.HasName;
             UseOr = data.UseOr;
+            IgnoreProperty = data.IgnoreProperty;
             if (!string.IsNullOrEmpty(FieldName))
                 _customName = true;
         }

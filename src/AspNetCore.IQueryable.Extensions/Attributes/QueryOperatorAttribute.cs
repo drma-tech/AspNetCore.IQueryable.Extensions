@@ -12,5 +12,6 @@ namespace AspNetCore.IQueryable.Extensions.Attributes
         public string HasName { get; set; }
         public int Max { get; set; }
         public bool UseOr { get; set; } = false;
+        public bool IgnoreProperty { get; set; } = false;
     }
 }

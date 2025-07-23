@@ -81,7 +81,7 @@ namespace AspNetCore.IQueryable.Extensions
 
         public static bool IsDescending(this string field)
         {
-            return field.StartsWith("-");
+            return field.StartsWith('-');
         }
     }
 }

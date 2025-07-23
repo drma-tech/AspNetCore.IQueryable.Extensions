@@ -30,6 +30,12 @@ namespace AspNetCore.IQueryable.Extensions.Filter
             Expression lastExpression = null;
 
             var operations = ExpressionFactory.GetOperators<TEntity>(model);
+
+            if (operations.Any(a => a.Criteria.IgnoreProperty))
+            {
+                return null;
+            }
+
             foreach (var expression in operations.Ordered())
             {
                 if (!expression.Criteria.CaseSensitive)

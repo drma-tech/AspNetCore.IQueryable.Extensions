@@ -1,5 +1,3 @@
-using AutoMapper;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -15,7 +13,6 @@ using RESTFul.Api.Service.Interfaces;
 using System;
 using System.Linq;
 using System.Net.Mime;
-using System.Reflection;
 
 namespace RESTFul.Api
 {
@@ -50,11 +47,9 @@ namespace RESTFul.Api
                         Name = "MIT",
                         Url = new Uri("https://github.com/brunohbrito/AspNet.Core.RESTFull.Extensions/blob/master/LICENSE")
                     },
-
                 });
-
             });
-            services.AddMediatR(Assembly.GetExecutingAssembly());
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Startup>());
 
             services.AddResponseCaching();
             services.AddResponseCompression(options =>
